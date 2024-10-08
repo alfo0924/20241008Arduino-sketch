@@ -169,7 +169,7 @@ void loop() {
 
 
 
-#sketch_oct8c 程式分析
+# sketch_oct8c 程式分析
 
 這個程式實現了使用一個按鈕控制多個LED的功能，包含防彈跳機制。
 
@@ -264,7 +264,7 @@ void loop() {
 
 
 
-#sketch_oct8d 程式分析
+# sketch_oct8d 程式分析
 ## 硬體設置
 
 - 使用引腳 16 作為第一個按鈕的輸入
