@@ -164,3 +164,100 @@ void loop() {
 - 使用 `INPUT_PULLUP` 模式簡化按鈕電路設計
 - 通過串口輸出按鈕狀態，方便監控和調試
 
+
+
+
+
+
+#sketch_oct8c 程式分析
+
+這個程式實現了使用一個按鈕控制多個LED的功能，包含防彈跳機制。
+
+## 硬體設置
+
+- 使用引腳16作為輸入，連接到一個按鈕
+- 使用引腳4、5和0作為輸出，分別連接到三個LED
+
+## 程式結構
+
+程式主要分為兩個部分：`setup()` 函數和 `loop()` 函數。
+
+### setup() 函數
+
+```cpp
+void setup() {
+  Serial.begin(9600);
+  pinMode(16, INPUT_PULLUP);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(0, OUTPUT);
+  digitalWrite(4, LOW);
+  digitalWrite(5, LOW);
+  digitalWrite(0, LOW);
+}
+```
+
+這個函數負責初始化：
+- 設置串口通信
+- 配置引腳模式
+- 初始化LED狀態
+
+### 全局變數
+
+```cpp
+bool p16 = digitalRead(16);
+bool led_state = HIGH;
+bool flag = LOW;
+```
+
+- `p16`: 存儲按鈕（引腳16）的狀態
+- `led_state`: 記錄LED的當前狀態
+- `flag`: 用於實現防彈跳機制
+
+### loop() 函數
+
+```cpp
+void loop() {
+  p16 = digitalRead(16);
+  Serial.println(p16);
+
+  if (p16 == 0 && flag == LOW) {
+    digitalWrite(4, HIGH);
+    digitalWrite(5, HIGH);
+    digitalWrite(0, HIGH);
+    led_state = !led_state;
+    flag = HIGH;
+  }
+  else if (p16 == 1 && flag == HIGH) {
+    flag = LOW;
+  }
+
+  digitalWrite(4, led_state);
+  digitalWrite(5, led_state);
+  digitalWrite(0, led_state);
+  delay(100);
+}
+```
+
+這個函數實現主要邏輯：
+1. 讀取並輸出按鈕狀態
+2. 檢測按鈕按下事件並處理
+3. 更新所有LED的狀態
+
+## 程式邏輯說明
+
+1. **按鈕讀取**：
+   - 持續讀取引腳16的狀態，即按鈕的狀態
+
+2. **防彈跳機制**：
+   - 使用 `flag` 變數來防止一次按鈕按下被誤認為多次
+   - 只有在按鈕從未按下變為按下狀態時才觸發動作
+
+3. **LED控制**：
+   - 當檢測到有效的按鈕按下時，切換 `led_state`
+   - 根據 `led_state` 同時控制三個LED（引腳4、5和0）
+
+4. **狀態更新**：
+   - 每次循環結束時，根據 `led_state` 更新所有LED的狀態
+   - 使用100毫秒的延遲來減少CPU負載和按鈕彈跳的影響
+
