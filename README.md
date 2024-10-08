@@ -261,3 +261,112 @@ void loop() {
    - 每次循環結束時，根據 `led_state` 更新所有LED的狀態
    - 使用100毫秒的延遲來減少CPU負載和按鈕彈跳的影響
 
+
+
+
+#sketch_oct8d 程式分析
+## 硬體設置
+
+- 使用引腳 16 作為第一個按鈕的輸入
+- 使用引腳 2 作為第二個按鈕的輸入
+- 使用引腳 4、5 和 0 作為 LED 輸出
+
+## 程式結構
+
+程式主要分為三個部分：`setup()` 函數、`loop()` 函數和 `changeLEDState()` 函數。
+
+### setup() 函數
+
+```cpp
+void setup() {
+  Serial.begin(9600);
+  pinMode(16, INPUT_PULLUP);
+  pinMode(2, INPUT_PULLUP);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(0, OUTPUT);
+  digitalWrite(4, LOW);
+  digitalWrite(5, LOW);
+  digitalWrite(0, LOW);
+}
+```
+
+這個函數負責初始化：
+- 設置串口通信
+- 配置按鈕引腳為輸入模式（使用內部上拉電阻）
+- 配置 LED 引腳為輸出模式
+- 初始化所有 LED 為關閉狀態
+
+### 全局變數
+
+```cpp
+bool p16 = digitalRead(16);
+bool flag = LOW;
+int led_sequence = 0;
+```
+
+- `p16`: 存儲第一個按鈕的狀態
+- `flag`: 用於實現第一個按鈕的防彈跳機制
+- `led_sequence`: 記錄當前 LED 顯示序列
+
+### loop() 函數
+
+```cpp
+void loop() {
+  p16 = digitalRead(16);
+  bool button2State = digitalRead(2);
+  
+  Serial.println(p16);
+
+  if (button2State == LOW) {
+    changeLEDState();
+    delay(500);
+  }
+  else if (p16 == 0 && flag == LOW) {
+    changeLEDState();
+    flag = HIGH;
+  }
+  else if (p16 == 1 && flag == HIGH) {
+    flag = LOW;
+  }
+
+  delay(100);
+}
+```
+
+這個函數實現主要邏輯：
+1. 讀取兩個按鈕的狀態
+2. 如果第二個按鈕被按下，持續改變 LED 狀態
+3. 如果第一個按鈕被按下，單次改變 LED 狀態
+4. 實現第一個按鈕的防彈跳機制
+
+### changeLEDState() 函數
+
+```cpp
+void changeLEDState() {
+  // LED 狀態切換邏輯
+}
+```
+
+這個函數負責改變 LED 的顯示狀態：
+- 根據 `led_sequence` 設置不同的 LED 亮滅組合
+- 每次調用後增加 `led_sequence`，實現循環顯示效果
+
+## 程式邏輯說明
+
+1. **雙按鈕控制**：
+   - 第一個按鈕（引腳 16）：每次按下觸發一次 LED 狀態變化
+   - 第二個按鈕（引腳 2）：按住時持續觸發 LED 狀態變化
+
+2. **防彈跳機制**：
+   - 使用 `flag` 變數來防止第一個按鈕的重複觸發
+
+3. **LED 控制**：
+   - 使用 `led_sequence` 變數來追蹤當前 LED 顯示狀態
+   - 共有 8 種不同的 LED 顯示組合
+
+4. **自動循環**：
+   - 當第二個按鈕被按住時，LED 狀態每 500 毫秒變化一次
+
+5. **延遲處理**：
+   - 主循環中有 100 毫秒的延遲，用於減少 CPU 負載和按鈕彈跳影響
