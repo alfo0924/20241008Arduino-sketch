@@ -9,9 +9,9 @@ void setup() {
   pinMode(4, OUTPUT);  // 設置引腳4為輸出模式
   pinMode(5, OUTPUT);  // 設置引腳5為輸出模式
   pinMode(0, OUTPUT);  // 設置引腳0為輸出模式
-  digitalWrite(4, LOW);  // 初始化引腳4為低電平
-  digitalWrite(5, LOW);  // 初始化引腳5為低電平
-  digitalWrite(0, LOW);  // 初始化引腳0為低電平
+  digitalWrite(4, LOW);  // 初始化引腳4為低電平 GREEN
+  digitalWrite(5, LOW);  // 初始化引腳5為低電平 YELLOW
+  digitalWrite(0, LOW);  // 初始化引腳0為低電平 RED
 }
 
 // 讀取引腳16的初始狀態
@@ -61,12 +61,12 @@ void changeLEDState() {
   
   // 根據序列點亮LED
   if (led_sequence == 0) {
-    digitalWrite(4, HIGH);  // 點亮引腳4的LED
+    digitalWrite(0, HIGH);  // 點亮引腳4的LED
   } else if (led_sequence == 1) {
     digitalWrite(5, HIGH);  // 點亮引腳5的LED
   } else if (led_sequence == 2) {
-    digitalWrite(0, HIGH);  // 點亮引腳0的LED
-    digitalWrite(5, HIGH);  // 同時點亮引腳5的LED
+    digitalWrite(5, HIGH);  // 點亮引腳0的LED
+    digitalWrite(0, HIGH);  // 同時點亮引腳5的LED
   } else if (led_sequence == 3) {
     digitalWrite(4, HIGH);
     digitalWrite(5, LOW);
