@@ -1,6 +1,6 @@
 
 
-# sketch_oct8a解析
+# sketch_oct8a 解析
 
 這個Arduino程式實現了一個簡單的按鈕控制LED的功能。每次按下按鈕，LED的狀態就會切換一次（開啟或關閉）。
 
